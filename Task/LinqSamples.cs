@@ -64,5 +64,26 @@ namespace SampleQueries
                 ObjectDumper.Write(customer);
             }
         }
+
+        [Category("Homework")]
+        [Title("Task 6")]
+        [Description("Customers having empty data fields")]
+        public void Linq6()
+        {
+            // Укажите всех клиентов, у которых указан нецифровой почтовый код или не заполнен регион 
+            // или в телефоне не указан код оператора (для простоты считаем, что это равнозначно «нет круглых скобочек в начале»)
+
+            var customers =
+                from customer in dataSource.Customers
+                where (!string.IsNullOrEmpty(customer.PostalCode) && customer.PostalCode.Any(c => !char.IsDigit(c))) ||
+                      string.IsNullOrEmpty(customer.Region) ||
+                      !customer.Phone.StartsWith("(")
+                select customer;
+
+            foreach (var customer in customers)
+            {
+                ObjectDumper.Write(customer);
+            }
+        }
     }
 }
