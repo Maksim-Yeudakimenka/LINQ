@@ -25,6 +25,25 @@ namespace SampleQueries
 
         private DataSource dataSource = new DataSource();
 
+        [Category("Homework")]
+        [Title("Task 1")]
+        [Description("Customers with orders' total > X")]
+        public void Linq1()
+        {
+            // Выдайте список всех клиентов, чей суммарный оборот (сумма всех заказов) превосходит некоторую величину X.
+            // Продемонстрируйте выполнение запроса с различными X (подумайте, можно ли обойтись без копирования запроса несколько раз)
 
+            Func<decimal, Func<Customer, bool>> minTotal =
+                value => (customer => customer.Orders.Sum(order => order.Total) > value);
+
+            var activeCustomers = dataSource.Customers.Where(minTotal(0M));
+            var bigCustomers = dataSource.Customers.Where(minTotal(50000M));
+            var hugeCustomers = dataSource.Customers.Where(minTotal(100000M));
+
+            foreach (var customer in hugeCustomers)
+            {
+                ObjectDumper.Write(customer);
+            }
+        }
     }
 }
