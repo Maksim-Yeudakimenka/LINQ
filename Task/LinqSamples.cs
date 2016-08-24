@@ -45,5 +45,24 @@ namespace SampleQueries
                 ObjectDumper.Write(customer);
             }
         }
+
+        [Category("Homework")]
+        [Title("Task 3")]
+        [Description("Customers with order's total > X")]
+        public void Linq3()
+        {
+            // Найдите всех клиентов, у которых были заказы, превосходящие по сумме величину X
+
+            var minTotal = 300M;
+
+            var customers = dataSource.Customers
+                .Where(customer => customer.Orders
+                    .Any(order => order.Total > minTotal));
+
+            foreach (var customer in customers)
+            {
+                ObjectDumper.Write(customer);
+            }
+        }
     }
 }
