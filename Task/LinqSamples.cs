@@ -122,6 +122,36 @@ namespace SampleQueries
         }
 
         [Category("Homework")]
+        [Title("Task 5")]
+        [Description("Customers' start date, ordered")]
+        public void Linq5()
+        {
+            // Сделайте предыдущее задание, но выдайте список отсортированным по году, месяцу,
+            // оборотам клиента (от максимального к минимальному) и имени клиента
+
+            var customers =
+                from customer in dataSource.Customers
+                where customer.Orders.Any()
+                let firstOrder = customer.Orders.Min(order => order.OrderDate)
+                select new
+                {
+                    customer.CustomerID,
+                    customer.CompanyName,
+                    Total = customer.Orders.Sum(order => order.Total),
+                    firstOrder.Month,
+                    firstOrder.Year
+                }
+                into customerInfo
+                orderby customerInfo.Year, customerInfo.Month, customerInfo.Total descending, customerInfo.CompanyName
+                select customerInfo;
+
+            foreach (var customer in customers)
+            {
+                ObjectDumper.Write(customer);
+            }
+        }
+
+        [Category("Homework")]
         [Title("Task 6")]
         [Description("Customers having empty data fields")]
         public void Linq6()
