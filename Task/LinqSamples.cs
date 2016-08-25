@@ -210,5 +210,43 @@ namespace SampleQueries
                 Console.WriteLine();
             }
         }
+
+        [Category("Homework")]
+        [Title("Task 8")]
+        [Description("Group products by 3 categories based on UnitPrice")]
+        public void Linq8()
+        {
+            // Сгруппируйте товары по группам «дешевые», «средняя цена», «дорогие».
+            // Границы каждой группы задайте сами
+
+            Func<decimal, string> grouper = unitPrice =>
+            {
+                if (unitPrice < 15M)
+                {
+                    return "Cheap";
+                }
+
+                if (unitPrice >= 15M && unitPrice < 70M)
+                {
+                    return "Not so cheap";
+                }
+
+                return "High priced";
+            };
+
+            var products =
+                dataSource.Products
+                    .GroupBy(product => grouper(product.UnitPrice))
+                    .Select(group => new
+                    {
+                        PriceCategory = group.Key,
+                        Products = group
+                    });
+
+            foreach (var product in products)
+            {
+                ObjectDumper.Write(product, 1);
+            }
+        }
     }
 }
