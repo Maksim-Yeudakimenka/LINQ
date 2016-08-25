@@ -102,6 +102,26 @@ namespace SampleQueries
         }
 
         [Category("Homework")]
+        [Title("Task 4")]
+        [Description("Customers' start date")]
+        public void Linq4()
+        {
+            // Выдайте список клиентов с указанием, начиная с какого месяца какого года они стали клиентами
+            // (принять за таковые месяц и год самого первого заказа)
+
+            var customers =
+                from customer in dataSource.Customers
+                where customer.Orders.Any()
+                let firstOrder = customer.Orders.Min(order => order.OrderDate)
+                select new { customer.CustomerID, customer.CompanyName, firstOrder.Month, firstOrder.Year };
+
+            foreach (var customer in customers)
+            {
+                ObjectDumper.Write(customer);
+            }
+        }
+
+        [Category("Homework")]
         [Title("Task 6")]
         [Description("Customers having empty data fields")]
         public void Linq6()
