@@ -47,6 +47,42 @@ namespace SampleQueries
         }
 
         [Category("Homework")]
+        [Title("Task 2")]
+        [Description("Suppliers from the same country and city as a customer")]
+        public void Linq2()
+        {
+            // Для каждого клиента составьте список поставщиков, находящихся в той же стране и том же городе.
+            // Сделайте задания с использованием группировки и без.
+
+            var grouping =
+                from customer in dataSource.Customers
+                group customer by new { Customer = customer, customer.Country, customer.City }
+                into customerGroup
+                select new
+                {
+                    customerGroup.Key.Customer,
+                    Suppliers =
+                        from supplier in dataSource.Suppliers
+                        where supplier.Country == customerGroup.Key.Country && supplier.City == customerGroup.Key.City
+                        select supplier
+                };
+
+            var noGrouping = dataSource.Customers.ToDictionary(
+                customer => customer,
+                customer => dataSource.Suppliers
+                    .Where(supplier => supplier.Country == customer.Country && supplier.City == customer.City));
+
+            foreach (var item in noGrouping)
+            {
+                ObjectDumper.Write(item.Key);
+                foreach (var supplier in item.Value)
+                {
+                    ObjectDumper.Write(supplier);
+                }
+            }
+        }
+
+        [Category("Homework")]
         [Title("Task 3")]
         [Description("Customers with order's total > X")]
         public void Linq3()
