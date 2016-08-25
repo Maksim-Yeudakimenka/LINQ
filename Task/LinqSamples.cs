@@ -171,5 +171,44 @@ namespace SampleQueries
                 ObjectDumper.Write(customer);
             }
         }
+
+        [Category("Homework")]
+        [Title("Task 7")]
+        [Description("Products grouped by Category then by UnitsInStock ordered by UnitPrice")]
+        public void Linq7()
+        {
+            // Сгруппируйте все продукты по категориям, внутри – по наличию на складе,
+            // внутри последней группы отсортируйте по стоимости
+
+            var grouping = dataSource.Products.GroupBy(
+                product => product.Category,
+                (category, items) => new
+                {
+                    CategoryName = category,
+                    CategoryProducts = items.GroupBy(
+                        product => product.UnitsInStock,
+                        (count, things) => new
+                        {
+                            UnitsInStock = count,
+                            InStockProducts = things.OrderBy(product => product.UnitPrice)
+                        })
+
+                });
+
+            foreach (var category in grouping)
+            {
+                ObjectDumper.Write(category.CategoryName);
+                foreach (var categoryProduct in category.CategoryProducts)
+                {
+                    Console.Write("Units in stock: ");
+                    ObjectDumper.Write(categoryProduct.UnitsInStock);
+                    foreach (var inStockProduct in categoryProduct.InStockProducts)
+                    {
+                        ObjectDumper.Write(inStockProduct);
+                    }
+                }
+                Console.WriteLine();
+            }
+        }
     }
 }
