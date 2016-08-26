@@ -248,5 +248,37 @@ namespace SampleQueries
                 ObjectDumper.Write(product, 1);
             }
         }
+
+        [Category("Homework")]
+        [Title("Task 9")]
+        [Description("Average order total and average order count for city")]
+        public void Linq9()
+        {
+            // Рассчитайте среднюю прибыльность каждого города (среднюю сумму заказа по всем клиентам из данного города)
+            // и среднюю интенсивность (среднее количество заказов, приходящееся на клиента из каждого города)
+
+            var cities =
+                from customer in dataSource.Customers
+                group customer by customer.City
+                into cityCustomers
+                select new
+                {
+                    City = cityCustomers.Key,
+                    AverageOrderTotal =
+                        cityCustomers.Select(
+                            customer => customer.Orders.Any()
+                                ? customer.Orders.Average(order => order.Total)
+                                : 0M)
+                            .Average(avg => avg),
+                    AverageOrderCount = cityCustomers
+                        .Select(customer => customer.Orders.Length).Sum(count => count)
+                                        / cityCustomers.Count()
+                };
+
+            foreach (var city in cities)
+            {
+                ObjectDumper.Write(city);
+            }
+        }
     }
 }
