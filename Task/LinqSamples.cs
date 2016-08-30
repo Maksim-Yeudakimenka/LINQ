@@ -280,5 +280,75 @@ namespace SampleQueries
                 ObjectDumper.Write(city);
             }
         }
+
+        [Category("Homework")]
+        [Title("Task 10")]
+        [Description("Client activity by month, year, year and month")]
+        public void Linq10()
+        {
+            // Сделайте среднегодовую статистику активности клиентов по месяцам (без учета года),
+            // статистику по годам, по годам и месяцам (т.е. когда один месяц в разные годы имеет своё значение)
+
+            var customerOrdersByMonth =
+                from customer in dataSource.Customers
+                from order in customer.Orders
+                group order by new { customer.CompanyName, order.OrderDate.Month }
+                into ordersByMonth
+                orderby ordersByMonth.Key.CompanyName, ordersByMonth.Key.Month
+                select new
+                {
+                    Customer = ordersByMonth.Key.CompanyName,
+                    ordersByMonth.Key.Month,
+                    OrderCount = ordersByMonth.Count()
+                };
+
+            Console.WriteLine("Client activity by month");
+            foreach (var customerOrder in customerOrdersByMonth)
+            {
+                ObjectDumper.Write(customerOrder);
+            }
+            Console.WriteLine();
+
+            var customerOrdersByYear =
+                from customer in dataSource.Customers
+                from order in customer.Orders
+                group order by new { customer.CompanyName, order.OrderDate.Year }
+                into ordersByYear
+                orderby ordersByYear.Key.CompanyName, ordersByYear.Key.Year
+                select new
+                {
+                    Customer = ordersByYear.Key.CompanyName,
+                    ordersByYear.Key.Year,
+                    OrderCount = ordersByYear.Count()
+                };
+
+            Console.WriteLine("Client activity by year");
+            foreach (var customerOrder in customerOrdersByYear)
+            {
+                ObjectDumper.Write(customerOrder);
+            }
+            Console.WriteLine();
+
+            var customerOrdersByYearAndMonth =
+                from customer in dataSource.Customers
+                from order in customer.Orders
+                group order by new { customer.CompanyName, order.OrderDate.Year, order.OrderDate.Month }
+                into ordersByYearAndMonth
+                orderby ordersByYearAndMonth.Key.CompanyName, ordersByYearAndMonth.Key.Year,
+                    ordersByYearAndMonth.Key.Month
+                select new
+                {
+                    Customer = ordersByYearAndMonth.Key.CompanyName,
+                    ordersByYearAndMonth.Key.Year,
+                    ordersByYearAndMonth.Key.Month,
+                    OrderCount = ordersByYearAndMonth.Count()
+                };
+
+            Console.WriteLine("Client activity by year and month");
+            foreach (var customerOrder in customerOrdersByYearAndMonth)
+            {
+                ObjectDumper.Write(customerOrder);
+            }
+        }
     }
 }
